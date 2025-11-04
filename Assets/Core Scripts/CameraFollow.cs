@@ -44,7 +44,7 @@ public class CameraFollow : MonoBehaviour
     {
         target = newTarget;
 
-        if (smoothSwitch) // ease in (
+        if (smoothSwitch) // ease in
         {
             isBlending = true;
             blendTimer = blendOutDuration;

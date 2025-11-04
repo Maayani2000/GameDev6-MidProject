@@ -157,6 +157,19 @@ public class Collector : PlayableCharacter
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, itemInteractRadius);
+
+        if (carryPoints == null || carryPoints.Length == 0) return;
+
+        Gizmos.color = Color.yellow;
+        foreach (var point in carryPoints)
+        {
+            if (point != null)
+            {
+                Gizmos.DrawWireSphere(point.position, 0.15f);
+                UnityEditor.Handles.Label(point.position + Vector3.up * 0.2f, point.name);
+            }
+        }
+
     }
 
 }

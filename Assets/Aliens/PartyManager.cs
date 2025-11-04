@@ -25,6 +25,7 @@ public class PartyManager : MonoBehaviour
     public LayerMask bigObjectsLayer; // big objest so they can go behind it
     public LayerMask enemiesLayer; // enemies (for freezer)
     public LayerMask itemsLayer; // keys ,parts and doors (for collector and telecinetic)
+    public LayerMask Default;
 
     [Header("Main Camera")] // for camera attachment (for updating the target later)
     public CameraFollow cameraFollow;
@@ -120,6 +121,10 @@ public class PartyManager : MonoBehaviour
 
         UpdateSorting();
         isSwitching = false;
+    }
+    public void SetSwitchingBlocked(bool blocked) // for temorrary limit
+    {
+        isSwitching = blocked;
     }
 
     void ApplyMemberDefaults() // unlcok leaders controls and set followers as locked

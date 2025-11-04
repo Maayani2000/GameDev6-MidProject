@@ -17,7 +17,7 @@ public class ItemSpawnerManager : MonoBehaviour
     public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
 
     [Header("Prefabs List")]
-    public List<GameObject> keycardPrefabs; // neeed to attach all 3 different keycards (easier to index for doors then full random)
+    public List<GameObject> keycardPrefabs; // neeed to attach all 3 different keycards prefabs (easier to index for doors than full random)
     public List<GameObject> shipPartPrefabs; // smae for all 4 different ship parts
 
     void Start()

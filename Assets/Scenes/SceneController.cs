@@ -8,7 +8,7 @@ public class SceneController : MonoBehaviour
     public void StartGame() // Load the main game scene (map)
     {
         //SceneManager.LoadScene("TheGame");
-        SceneManager.LoadScene("Sample 1");
+        SceneManager.LoadScene("TheGame");
     }
 
     public void TryAgain() // Reload the main game scene (reset the map)
