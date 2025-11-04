@@ -1,0 +1,14 @@
+# Unity
+/Library/
+/Temp/
+/Obj/
+/Builds/
+/Logs/
+/UserSettings/
+/UnityPackageManager/
+# VS/Rider/IDE
+*.csproj
+*.unityproj
+*.sln
+*.user
+*.userprefs
