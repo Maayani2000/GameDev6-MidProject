@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6265dd50bdcfdee4cb1972b1d4c2877f
+guid: 7d5966f6da4a81a4ebb6a01635279e7d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,19 +94,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Windows Store Apps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
     buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -145,17 +132,30 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GuardBack
+      name: oOrb
       rect:
         serializedVersion: 2
-        x: 13
-        y: 18
-        width: 585
-        height: 1018
+        x: 269
+        y: 126
+        width: 228
+        height: 242
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,71 +163,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5836ae3f198a8ec4487bfa61a96d41d1
-      internalID: -1754624610
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: GuardFront
-      rect:
-        serializedVersion: 2
-        x: 609
-        y: 25
-        width: 583
-        height: 1017
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b16e719b0f3b33340ac00fbef0c8db52
-      internalID: 165346280
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ScientistL
-      rect:
-        serializedVersion: 2
-        x: 1185
-        y: 47
-        width: 364
-        height: 849
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 17976aa6600b00147a375d0e4c8d6c30
-      internalID: 1855447612
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ScientistR
-      rect:
-        serializedVersion: 2
-        x: 1555
-        y: 44
-        width: 362
-        height: 849
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 76dc770b29d4f76439cdb91612f765b2
-      internalID: 1725500015
+      spriteID: 280153b441d80204c8b98cdd090761cf
+      internalID: -1310543902
       vertices: []
       indices: 
       edges: []
@@ -243,10 +180,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      GuardBack: -1754624610
-      GuardFront: 165346280
-      ScientistL: 1855447612
-      ScientistR: 1725500015
+      oOrb: -1310543902
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
