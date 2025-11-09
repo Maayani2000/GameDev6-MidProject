@@ -35,24 +35,25 @@ public class RestartManager : MonoBehaviour
     {
         if (Input.GetKeyDown(restartKey))
         {
-            Restart();
+            var activeScene = SceneManager.GetActiveScene();
+            if (activeScene.IsValid() && IsRestartAllowed(activeScene.name))
+            {
+                Restart();
+            }
         }
     }
 
     public void Restart()
     {
-        if (!reloadActiveScene && !string.IsNullOrEmpty(sceneToLoad))
-        {
+        if (!IsRestartAllowed(SceneManager.GetActiveScene().name)) return;
+
+        if (!string.IsNullOrEmpty(sceneToLoad))
             SceneManager.LoadScene(sceneToLoad);
-        }
-        else
-        {
-            Scene activeScene = SceneManager.GetActiveScene();
-            if (activeScene.IsValid())
-            {
-                SceneManager.LoadScene(activeScene.buildIndex);
-            }
-        }
+    }
+
+    static bool IsRestartAllowed(string sceneName)
+    {
+        return sceneName == "Win" || sceneName == "Lose";
     }
 }
 
