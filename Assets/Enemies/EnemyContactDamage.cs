@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EnemyContactDamage : MonoBehaviour
 {
-    public int contactDamage = 1;
+    [Min(0)]
+    public int contactDamage = 25;
     public bool damageOnEnter = true;
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -21,10 +22,12 @@ public class EnemyContactDamage : MonoBehaviour
 
     private void TryApplyDamage(Collider2D other)
     {
-        var dmg = other.GetComponent<IDamageable>();
-        if (dmg != null)
+        if (contactDamage <= 0) return;
+
+        var damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            //dmg.TakeDamage(contactDamage, this);
+            damageable.TakeDamage(contactDamage);
         }
     }
 }

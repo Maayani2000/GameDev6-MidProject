@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public abstract class PlayableCharacter : MonoBehaviour, IDamageable
     [Header("Stats")]
     public int maxHp = 100;
     public int currentHp = 100;
+    public event Action<int, int> OnHealthChanged;
 
     [Header("Movement")]
     public float speed = 5f;
@@ -26,6 +28,7 @@ public abstract class PlayableCharacter : MonoBehaviour, IDamageable
     {
         rb = GetComponent<Rigidbody2D>() ?? GetComponentInChildren<Rigidbody2D>();
         currentHp = maxHp;
+        NotifyHealthChanged();
     }
 
     protected virtual void Update()
@@ -78,6 +81,8 @@ public abstract class PlayableCharacter : MonoBehaviour, IDamageable
     public virtual void TakeDamage(int amount)
     {
         currentHp -= amount;
+        if (currentHp < 0) currentHp = 0;
+        NotifyHealthChanged();
         if (currentHp <= 0)
             Die();
     }
@@ -98,4 +103,9 @@ public abstract class PlayableCharacter : MonoBehaviour, IDamageable
     public bool IsControlsLocked() => controlsLocked;
 
     public abstract void SpecialAbility();
+
+    protected void NotifyHealthChanged()
+    {
+        OnHealthChanged?.Invoke(Mathf.Max(0, currentHp), maxHp);
+    }
 }

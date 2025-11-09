@@ -6,7 +6,8 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour
 {
     [Header("Stats")]
-    public int contactDamage = 1;
+    [Min(0)]
+    public int contactDamage = 25;
     public float contactCooldown = 0.5f;
 
     public int maxHP = 3;
@@ -74,8 +75,39 @@ public class EnemyBase : MonoBehaviour
         Destroy(gameObject, 1.5f);
     }
 
+    float lastContactTime = Mathf.NegativeInfinity;
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        TryDealContactDamage(collision.collider);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        TryDealContactDamage(collision.collider);
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        //
+        TryDealContactDamage(other);
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        TryDealContactDamage(other);
+    }
+
+    void TryDealContactDamage(Collider2D other)
+    {
+        if (contactDamage <= 0) return;
+        if (Time.time - lastContactTime < contactCooldown) return;
+        if (other == null) return;
+
+        var damageable = other.GetComponent<IDamageable>() ?? other.GetComponentInParent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(contactDamage);
+            lastContactTime = Time.time;
+        }
     }
 }
