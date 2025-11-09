@@ -6,6 +6,7 @@ public class RestartManager : MonoBehaviour
     [SerializeField] private KeyCode restartKey = KeyCode.R;
     [SerializeField] private string sceneToLoad = "TheGame";
     [SerializeField] private bool reloadActiveScene = false;
+    [SerializeField] private KeyCode mainMenuKey = KeyCode.M;
 
     static RestartManager instance;
 
@@ -41,6 +42,15 @@ public class RestartManager : MonoBehaviour
                 Restart();
             }
         }
+
+        if (Input.GetKeyDown(mainMenuKey))
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            if (activeScene.IsValid() && activeScene.name == "Lose")
+            {
+                LoadMainMenu();
+            }
+        }
     }
 
     public void Restart()
@@ -49,6 +59,11 @@ public class RestartManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(sceneToLoad))
             SceneManager.LoadScene(sceneToLoad);
+    }
+
+    void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     static bool IsRestartAllowed(string sceneName)
