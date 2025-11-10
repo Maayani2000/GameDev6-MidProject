@@ -26,12 +26,16 @@ Area 51 v2 is a top-down stealth action prototype built with Unity. You guide a 
 | Input                | Action                                             |
 |----------------------|----------------------------------------------------|
 | WASD / Arrow Keys    | Move the current leader                             |
-| `E`                  | Interact (use doors, pick up items)                 |
+| `E`                  | Interact (pickup, door) / Fire ability              |
 | `Space`              | Switch to the next party member                     |
 | `R`                  | Restart a run (only on Win/Lose screens)           |
 | `M`                  | Return to Main Menu (only on Lose screen)          |
 
-Each alien has a special ability mapped to context-sensitive controls (e.g. Freezer’s freeze ability, Telekinetic’s pull ability).
+Each alien has a unique `E`-ability once in range of a valid target:
+
+- **Collector** attaches items or keys to the squad.
+- **Freezer** locks every nearby soldier or camera for ~6 seconds, preventing movement, AI updates, and sweep lights.
+- **Telekinetic** drags distant items toward the squad from a safe distance.
 
 ## Project Structure
 
@@ -53,6 +57,7 @@ Notable scripts:
 - `EnemyBase` and `EnemyAI`: Core enemy stats and behaviour (patrol, chase logic).
 - `EnemyContactDamage`: Applies touch damage to any `IDamageable` when colliding or overlapping.
 - `PlayerHealthUI`: Subscribes to the active leader’s HP updates and refreshes HUD text/bar.
+- `Freezer`: Finds all `EnemyBase`/`SecurityCameraV2` in range and calls their disable hooks while applying a freeze outline.
 - `RestartManager`: Global input watcher for run restarts and returning to menu.
 - `InitialSceneLoader`: Ensures the game always boots into `MainMenu`.
 - `AnyKeyStart`: On the main menu, starts `TheGame` when any key is pressed.
