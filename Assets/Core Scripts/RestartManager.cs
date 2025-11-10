@@ -5,7 +5,6 @@ public class RestartManager : MonoBehaviour
 {
     [SerializeField] private KeyCode restartKey = KeyCode.R;
     [SerializeField] private string sceneToLoad = "TheGame";
-    [SerializeField] private bool reloadActiveScene = false;
     [SerializeField] private KeyCode mainMenuKey = KeyCode.M;
 
     static RestartManager instance;

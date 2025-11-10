@@ -19,6 +19,9 @@ public class EnemyBase : MonoBehaviour
     public bool frozen = false;
 
     bool isDead = false;
+    Rigidbody2D rb;
+    EnemyAI enemyAI;
+    PatrolMover patrolMover;
 
     [Header("References")]
     public Animator animator;
@@ -28,6 +31,10 @@ public class EnemyBase : MonoBehaviour
     {
         currentHP = maxHP;
         if (hitCollider == null) hitCollider = GetComponent<Collider2D>();
+        if (animator == null) animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        enemyAI = GetComponent<EnemyAI>();
+        patrolMover = GetComponent<PatrolMover>();
     }
 
     public void TakeDamage(int amount)
@@ -52,7 +59,10 @@ public class EnemyBase : MonoBehaviour
     {
         if (isDead) return;
         frozen = true;
-        animator?.SetBool("Frozen", true);
+        SetFrozenAnimator(true);
+        if (enemyAI != null) enemyAI.enabled = false;
+        if (patrolMover != null) patrolMover.enabled = false;
+        if (rb != null) rb.velocity = Vector2.zero;
         CancelInvoke(nameof(Enable));
         Invoke(nameof(Enable), seconds);
     }
@@ -60,7 +70,9 @@ public class EnemyBase : MonoBehaviour
     void Enable()
     {
         frozen = false;
-        animator?.SetBool("Frozen", false);
+        SetFrozenAnimator(false);
+        if (enemyAI != null) enemyAI.enabled = true;
+        if (patrolMover != null) patrolMover.enabled = true;
     }
 
     void Die()
@@ -73,6 +85,20 @@ public class EnemyBase : MonoBehaviour
         var rb = GetComponent<Rigidbody2D>();
         if (rb != null) rb.simulated = false; // disable physics
         Destroy(gameObject, 1.5f);
+    }
+
+    void SetFrozenAnimator(bool value)
+    {
+        if (animator == null) return;
+        try
+        {
+            animator.SetBool("Frozen", value);
+        }
+        catch (MissingComponentException)
+        {
+            Debug.LogWarning($"EnemyBase on {name} tried to set Animator 'Frozen' but no Animator exists. Disabling animator reference.");
+            animator = null;
+        }
     }
 
     float lastContactTime = Mathf.NegativeInfinity;

@@ -31,6 +31,11 @@ public class SecurityCameraV2 : MonoBehaviour
     private float lastSeenTime = -999f; // last seen time
     private float lockTimer = 0f; // time spent following locking target
     private bool isAlerting = false;
+    private bool isDisabled = false;
+    bool storedSweepEnabled;
+    bool storedLightSync;
+    bool storedVisionEnabled;
+    Coroutine disableRoutine;
 
     private void OnValidate() // for debuggin
     {
@@ -50,6 +55,8 @@ public class SecurityCameraV2 : MonoBehaviour
 
     void Update()
     {
+        if (isDisabled) return;
+
         UpdateLightSync();
         Transform seen = null;
         if (vision != null)
@@ -93,6 +100,44 @@ public class SecurityCameraV2 : MonoBehaviour
 
         if (sweepEnabled)
             SweepPivot();
+    }
+
+    public void DisableTemporarily(float seconds)
+    {
+        if (!isDisabled)
+        {
+            storedSweepEnabled = sweepEnabled;
+            storedLightSync = enableLightSync;
+            storedVisionEnabled = vision != null && vision.enabled;
+            sweepEnabled = false;
+            enableLightSync = false;
+            if (vision != null) vision.enabled = false;
+            SetAlertLight(false);
+            isAlerting = false;
+            currentTarget = null;
+            lockTimer = 0f;
+            isDisabled = true;
+        }
+        else if (disableRoutine != null)
+        {
+            StopCoroutine(disableRoutine);
+        }
+
+        disableRoutine = StartCoroutine(DisableRoutine(seconds));
+    }
+
+    IEnumerator DisableRoutine(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        sweepEnabled = storedSweepEnabled;
+        enableLightSync = storedLightSync;
+        if (vision != null) vision.enabled = storedVisionEnabled;
+        isAlerting = false;
+        currentTarget = null;
+        lockTimer = 0f;
+        isDisabled = false;
+        disableRoutine = null;
     }
 
     void TrackTarget()
