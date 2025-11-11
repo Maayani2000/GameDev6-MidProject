@@ -17,6 +17,14 @@ public class Item : MonoBehaviour
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        var winCondition = FindObjectOfType<WinCondition>();
+        winCondition?.RegisterCollectable(this);
+    }
+
+    void Start()
+    {
+        var winCondition = FindObjectOfType<WinCondition>();
+        winCondition?.RegisterCollectable(this);
     }
 
     public void SetVisible(bool visible)
@@ -32,6 +40,8 @@ public class Item : MonoBehaviour
     {
         inInventory = true;
         Debug.Log($"{itemType} (lvl {keyLevel}) picked and is in Inventory");
+        var winCondition = FindObjectOfType<WinCondition>();
+        winCondition?.MarkCollected(this);
     }
 
     public void OnDropped(Vector3 worldPos) // if we want object to fall back if getting damaged b7ut is optional

@@ -8,6 +8,17 @@ public class SpaceShip : MonoBehaviour
     public int partsInstalled = 0;
     public int totalParts = 4;
     public TextMeshPro progressText; // for inspector or later change to update normal visual UI
+    WinCondition winCondition;
+
+    void Awake()
+    {
+        winCondition = GetComponent<WinCondition>();
+        if (winCondition == null)
+            winCondition = gameObject.AddComponent<WinCondition>();
+
+        winCondition.spaceShip = this;
+    }
+
     void Start()
     {
         UpdateUI();
@@ -20,12 +31,13 @@ public class SpaceShip : MonoBehaviour
         if (partsInstalled >= totalParts)
         {
             Debug.Log("Ship fixed!!");
-            // trigger win condition
+            winCondition?.TryEvaluate();
         }
     }
 
     void UpdateUI()
     {
-        progressText.text = $"{partsInstalled}/{totalParts}";
+        if (progressText != null)
+            progressText.text = $"{partsInstalled}/{totalParts}";
     }
 }
