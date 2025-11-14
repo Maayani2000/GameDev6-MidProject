@@ -57,6 +57,7 @@ Notable scripts:
 - `EnemyBase` and `EnemyAI`: Core enemy stats and behaviour (patrol, chase logic).
 - `EnemyContactDamage`: Applies touch damage to any `IDamageable` when colliding or overlapping.
 - `PlayerHealthUI`: Subscribes to the active leader’s HP updates and refreshes HUD text/bar.
+- `PlayerStatusMessageUI`: Broadcasts "youv'e been hit!" for the leader or "`<alien name>` has been hit!" when followers take damage.
 - `Freezer`: Finds all `EnemyBase`/`SecurityCameraV2` in range and calls their disable hooks while applying a freeze outline.
 - `RestartManager`: Global input watcher for run restarts and returning to menu.
 - `InitialSceneLoader`: Ensures the game always boots into `MainMenu`.
@@ -67,6 +68,7 @@ Notable scripts:
 - You control one alien at a time. The current leader is the only member with unlocked controls.
 - Interact with items and doors using `E`.
 - Enemies deal 25 HP damage on contact; HP updates immediately in the HUD.
+- The status text HUD banner flashes “youv'e been hit!” for the leader or names any follower that gets tagged, so you can react quickly.
 - If HP hits zero, you’re sent to the Lose scene. Press `R` there to retry or `M` to return to the menu.
 - On victory, the Win scene is shown; press `R` to replay.
 
@@ -93,6 +95,7 @@ Notable scripts:
 - The game skips the menu: ensure `InitialSceneLoader` and `MainMenu` are included in build settings and no other script calls `SceneManager.LoadScene` at startup.
 - Restart hotkey doesn’t work: verify you’re on the Win/Lose scene and the `RestartManager` GameObject persists in play mode.
 - HP doesn’t update: confirm the player prefab uses `PlayableCharacter` derivatives and `PlayerHealthUI` is present in `TheGame` scene.
+- Hit notifications missing: ensure the HUD `Status text` object has `PlayerStatusMessageUI` attached and its `partyManager` reference is set.
 
 For additional issues, inspect the Unity Console for errors and check the relevant script referenced above.
 
