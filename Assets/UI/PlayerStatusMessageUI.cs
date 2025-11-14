@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -12,10 +14,14 @@ public class PlayerStatusMessageUI : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float displayDuration = 2f;
     [SerializeField] private string hitMessage = "youv'e been hit!";
+    [SerializeField] private string otherHitTemplate = "{0} has been hit!";
 
     private PlayableCharacter trackedCharacter;
-    private int lastKnownHp = -1;
     private Coroutine hideRoutine;
+
+    private readonly Dictionary<PlayableCharacter, int> lastHealthValues = new();
+    private readonly Dictionary<PlayableCharacter, Action<int, int>> healthSubscriptions = new();
+    private readonly List<PlayableCharacter> syncBuffer = new();
 
     void Awake()
     {
@@ -30,6 +36,7 @@ public class PlayerStatusMessageUI : MonoBehaviour
 
         PlayableCharacter initial = GetLeaderCharacter() ?? playerOverride ?? FindObjectOfType<PlayableCharacter>();
         SetTrackedCharacter(initial);
+        SyncPartyMembers();
     }
 
     void Update()
@@ -37,21 +44,23 @@ public class PlayerStatusMessageUI : MonoBehaviour
         var leaderCharacter = GetLeaderCharacter();
         if (leaderCharacter != null && leaderCharacter != trackedCharacter)
             SetTrackedCharacter(leaderCharacter);
+
+        SyncPartyMembers();
     }
 
     void OnEnable()
     {
-        Subscribe();
+        SyncPartyMembers();
     }
 
     void OnDisable()
     {
-        Unsubscribe();
+        ClearSubscriptions();
     }
 
     void OnDestroy()
     {
-        Unsubscribe();
+        ClearSubscriptions();
     }
 
     PlayableCharacter GetLeaderCharacter()
@@ -71,31 +80,122 @@ public class PlayerStatusMessageUI : MonoBehaviour
         if (trackedCharacter == character)
             return;
 
-        Unsubscribe();
         trackedCharacter = character;
-        Subscribe();
 
-        lastKnownHp = trackedCharacter != null ? trackedCharacter.currentHp : -1;
-    }
-
-    void Subscribe()
-    {
         if (trackedCharacter != null)
-            trackedCharacter.OnHealthChanged += HandleHealthChanged;
+            lastHealthValues[trackedCharacter] = trackedCharacter.currentHp;
+
+        SyncPartyMembers();
     }
 
-    void Unsubscribe()
+    void SyncPartyMembers()
     {
-        if (trackedCharacter != null)
-            trackedCharacter.OnHealthChanged -= HandleHealthChanged;
+        syncBuffer.Clear();
+
+        if (partyManager != null && partyManager.members != null)
+        {
+            foreach (var member in partyManager.members)
+            {
+                var character = GetPlayableFromPartyMember(member);
+                if (character != null && !syncBuffer.Contains(character))
+                    syncBuffer.Add(character);
+            }
+        }
+
+        if (playerOverride != null && !syncBuffer.Contains(playerOverride))
+            syncBuffer.Add(playerOverride);
+
+        if (trackedCharacter != null && !syncBuffer.Contains(trackedCharacter))
+            syncBuffer.Add(trackedCharacter);
+
+        var existing = new List<PlayableCharacter>(healthSubscriptions.Keys);
+        foreach (var character in existing)
+        {
+            if (!syncBuffer.Contains(character))
+                RemoveSubscription(character);
+        }
+
+        foreach (var character in syncBuffer)
+            EnsureSubscription(character);
     }
 
-    void HandleHealthChanged(int current, int maximum)
+    PlayableCharacter GetPlayableFromPartyMember(PartyMember member)
     {
-        if (lastKnownHp >= 0 && current < lastKnownHp)
-            ShowMessage(hitMessage);
+        if (member == null)
+            return null;
 
-        lastKnownHp = current;
+        return member.GetComponent<PlayableCharacter>() ??
+               member.GetComponentInChildren<PlayableCharacter>();
+    }
+
+    void EnsureSubscription(PlayableCharacter character)
+    {
+        if (character == null || healthSubscriptions.ContainsKey(character))
+            return;
+
+        Action<int, int> handler = (current, maximum) => HandleHealthChanged(character, current, maximum);
+        character.OnHealthChanged += handler;
+        healthSubscriptions[character] = handler;
+        lastHealthValues[character] = character.currentHp;
+    }
+
+    void RemoveSubscription(PlayableCharacter character)
+    {
+        if (character == null)
+            return;
+
+        if (healthSubscriptions.TryGetValue(character, out var handler))
+        {
+            character.OnHealthChanged -= handler;
+            healthSubscriptions.Remove(character);
+        }
+
+        lastHealthValues.Remove(character);
+    }
+
+    void ClearSubscriptions()
+    {
+        var existing = new List<PlayableCharacter>(healthSubscriptions.Keys);
+        foreach (var character in existing)
+            RemoveSubscription(character);
+    }
+
+    void HandleHealthChanged(PlayableCharacter character, int current, int maximum)
+    {
+        if (character == null)
+            return;
+
+        if (!lastHealthValues.TryGetValue(character, out var previous))
+            previous = current;
+
+        if (current < previous)
+        {
+            string message = character == trackedCharacter
+                ? hitMessage
+                : FormatOtherHitMessage(character);
+
+            if (!string.IsNullOrEmpty(message))
+                ShowMessage(message);
+        }
+
+        lastHealthValues[character] = current;
+    }
+
+    string GetCharacterDisplayName(PlayableCharacter character)
+    {
+        if (character == null)
+            return "Party member";
+
+        return character.gameObject != null ? character.gameObject.name : character.name;
+    }
+
+    string FormatOtherHitMessage(PlayableCharacter character)
+    {
+        string displayName = GetCharacterDisplayName(character);
+        if (!string.IsNullOrWhiteSpace(otherHitTemplate))
+            return string.Format(otherHitTemplate, displayName);
+
+        return $"{displayName} has been hit!";
     }
 
     void ShowMessage(string message)
