@@ -83,23 +83,6 @@ Notable scripts:
 3. Select your target platform (PC, Mac & Linux Standalone recommended).
 4. Click **Build** (or **Build and Run**) and choose an output folder.
 
-## Contributing
-
-1. Fork the repository or create a feature branch.
-2. Implement your changes.
-3. Run play mode smoke tests to confirm functionality.
-4. Submit a pull request summarizing the update and testing performed.
-
-## Troubleshooting
-
-- The game skips the menu: ensure `InitialSceneLoader` and `MainMenu` are included in build settings and no other script calls `SceneManager.LoadScene` at startup.
-- Restart hotkey doesn’t work: verify you’re on the Win/Lose scene and the `RestartManager` GameObject persists in play mode.
-- HP doesn’t update: confirm the player prefab uses `PlayableCharacter` derivatives and `PlayerHealthUI` is present in `TheGame` scene.
-- Hit notifications missing: ensure the HUD `Status text` object has `PlayerStatusMessageUI` attached and its `partyManager` reference is set.
-
-For additional issues, inspect the Unity Console for errors and check the relevant script referenced above.
-
----
-
 Enjoy infiltrating Area 51 (again)! 👽
+
 
