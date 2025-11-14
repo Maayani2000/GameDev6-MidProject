@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.UI.Image;
 
 [RequireComponent(typeof(Collider2D))]
 public class SecurityCameraV2 : MonoBehaviour
@@ -26,6 +29,9 @@ public class SecurityCameraV2 : MonoBehaviour
     public float lostSightDelay = 2f;// how long to wait after last seen before returning to regular rotation
     public LayerMask enemiesNotifyMask;
     public float notifyRadius = 8f;
+
+    public TextMeshPro secCamStatus; // UI text
+    private Coroutine messageRoutine;
 
     Transform currentTarget; // Transform location for target
     private float lastSeenTime = -999f; // last seen time
@@ -194,21 +200,21 @@ public class SecurityCameraV2 : MonoBehaviour
     {
         if (isAlerting) return;
         isAlerting = true;
-        Debug.Log($"SecurityCamera: Alarm triggered at {origin} by {currentTarget?.name}");
+
+        Debug.Log($"Alarm triggered!! by {currentTarget?.name}");
+        ShowMessage($"Alarm triggered!! by {currentTarget?.name}", 3f);
 
         SetAlertLight(true);
 
-        // notify nearby enemies (example: push an event or overlap)
-        Collider2D[] found = Physics2D.OverlapCircleAll(origin, notifyRadius, enemiesNotifyMask);
+        Collider2D[] found = Physics2D.OverlapCircleAll(origin, notifyRadius, enemiesNotifyMask);// notify nearby enemies (overlap)
         foreach (var c in found)
         {
             if (c == null) continue;
-            // Try to find an enemy component (example)
-            var enemyAI = c.GetComponentInParent<EnemyAI>();
+            var enemyAI = c.GetComponentInParent<EnemyAI>(); // try to find an enemy component
+
             if (enemyAI != null)
             {
-                // Implement your interfacing method on enemies (example method name)
-                // enemyAI.OnAlarmTriggered(origin);
+                //enemyAI.OnAlarmTriggered(origin);
             }
         }
     }
@@ -230,4 +236,23 @@ public class SecurityCameraV2 : MonoBehaviour
         Gizmos.DrawLine(pivot.position, pivot.position + left * viewDistance);
         Gizmos.DrawLine(pivot.position, pivot.position + right * viewDistance);
     }
+
+    #region text update
+    private void ShowMessage(string message, float duration = 2f)
+    {
+        if (secCamStatus == null) return;
+
+        if (messageRoutine != null)
+            StopCoroutine(messageRoutine);
+
+        messageRoutine = StartCoroutine(ShowMessageRoutine(message, duration));
+    }
+
+    private IEnumerator ShowMessageRoutine(string message, float duration)
+    {
+        secCamStatus.text = message;
+        yield return new WaitForSeconds(duration);
+        secCamStatus.text = string.Empty;
+    }
+    #endregion
 }

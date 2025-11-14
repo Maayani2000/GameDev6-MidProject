@@ -60,7 +60,7 @@ public class PatrolMover : MonoBehaviour
         dir = dir.normalized;
         rb.MovePosition(pos + dir * moveSpeed * Time.fixedDeltaTime);
 
-        if (dir.sqrMagnitude > 0.01f) // rotate only the vision cone (not the sprite)
+        if (dir.sqrMagnitude > 0.01f) // rotate only the vision cone (and not the sprite)
         {
             if (visionCone != null)
                 visionCone.right = dir;

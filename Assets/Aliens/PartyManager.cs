@@ -30,7 +30,6 @@ public class PartyManager : MonoBehaviour
     [Header("Main Camera")] // for camera attachment (for updating the target later)
     public CameraFollow cameraFollow;
 
-    // state
     public PartyMember currentLeader { get; private set; }
     public bool isSwitching { get; private set; }
 
@@ -51,8 +50,7 @@ public class PartyManager : MonoBehaviour
         trail.Add(lastRecordedPos); // start a new one
 
         ApplyMemberDefaults();
-        UpdateSorting();
-        
+
         cameraFollow.SetTarget(currentLeader.transform, false); // set the leader as target to follow, but turn off smoothing (camera delay)
     }
 
@@ -64,11 +62,6 @@ public class PartyManager : MonoBehaviour
             StartCoroutine(Switch()); // and then do ther switching seq
 
         RememberTrail(); // remeber postions
-    }
-
-    void LateUpdate()
-    {
-        UpdateSorting();
     }
     void RandomOrder() // Random Leader and list order
     {
@@ -119,7 +112,6 @@ public class PartyManager : MonoBehaviour
             yield return null;
         }
 
-        UpdateSorting();
         isSwitching = false;
     }
     public void SetSwitchingBlocked(bool blocked) // for temorrary limit
@@ -162,15 +154,4 @@ public class PartyManager : MonoBehaviour
 
         return trail[idx];
     }
-
-    void UpdateSorting() // in front / behind
-    {
-        members.RemoveAll(m => m == null);
-        if (members.Count == 0) return;
-
-        var sorted = members.OrderBy(m => m.transform.position.y).ToList();
-        for (int i = 0; i < sorted.Count; i++)
-            sorted[i].ApplySorting(baseSortingOrder + i);
-    }
-
 }

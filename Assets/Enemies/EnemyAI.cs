@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -62,6 +63,8 @@ public class EnemyAI : MonoBehaviour
     {
         lastPatrolPosition = transform.position; // optionally record previous position to return to (before chase)
     }
+
+    //void OnAlarmTriggered()
 
     #region Chase
     void EnterChase()

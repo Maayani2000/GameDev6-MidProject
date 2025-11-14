@@ -27,6 +27,11 @@ public class EnemyBase : MonoBehaviour
     public Animator animator;
     public Collider2D hitCollider;
 
+    [Header("Visuals")]
+    public SpriteRenderer sr;
+    public Color normalColor = Color.white;
+    public Color frozenColor = Color.cyan;
+
     void Awake()
     {
         currentHP = maxHP;
@@ -73,6 +78,8 @@ public class EnemyBase : MonoBehaviour
         SetFrozenAnimator(false);
         if (enemyAI != null) enemyAI.enabled = true;
         if (patrolMover != null) patrolMover.enabled = true;
+        if (sr != null)
+                sr.color = normalColor; 
     }
 
     void Die()
@@ -93,10 +100,12 @@ public class EnemyBase : MonoBehaviour
         try
         {
             animator.SetBool("Frozen", value);
+            if (sr != null)
+                sr.color = frozenColor;
         }
         catch (MissingComponentException)
         {
-            Debug.LogWarning($"EnemyBase on {name} tried to set Animator 'Frozen' but no Animator exists. Disabling animator reference.");
+            //Debug.LogWarning($"EnemyBase on {name} tried to set Animator 'Frozen' but no Animator exists.");
             animator = null;
         }
     }

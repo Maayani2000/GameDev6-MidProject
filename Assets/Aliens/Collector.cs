@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using static ItemSpawnerManager;
 
 public class Collector : PlayableCharacter
@@ -19,9 +21,8 @@ public class Collector : PlayableCharacter
     public float gooInterval = 1f;
 
     [Header("Pickup visuals")]
-    public float pickedScale = 0.6f;
+    public float pickedScale = 2.3f;
     public float stackY = 0.3f;
-
 
     void Start()
     {
@@ -31,11 +32,14 @@ public class Collector : PlayableCharacter
     protected override void TryInteract()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, itemInteractRadius, itemsLayer);
-        Debug.Log($"TryInteract found {hits.Length} hits");
-        foreach (var hit in hits)
-        {
-            Debug.Log($"Hit: {hit.name}, Layer: {LayerMask.LayerToName(hit.gameObject.layer)}");
-        }
+
+        #region Debbuging checks (non relevant now, used it to narrow issues)
+        //Debug.Log($"TryInteract found {hits.Length} hits");
+        //foreach (var hit in hits)
+        //{
+        //Debug.Log($"Hit: {hit.name}, Layer: {LayerMask.LayerToName(hit.gameObject.layer)}");
+        //}
+        #endregion
 
         if (hits.Length == 0) return;
 
@@ -45,6 +49,16 @@ public class Collector : PlayableCharacter
             if (door != null)
             {
                 door.TryOpen(this);
+                return;
+            }
+        }
+
+        foreach (var hit in hits)
+        {
+            var ship = hit.GetComponent<SpaceShip>();
+            if (ship != null)
+            {
+                ship.TryToFix(this);
                 return;
             }
         }
